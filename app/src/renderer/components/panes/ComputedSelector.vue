@@ -1,13 +1,13 @@
 <template>
     <label class="nameEditor">
-      <div class="list-title" @click="open = !open">Methods <span style="float: right">{{functions.length}}</span></div>
+      <div class="list-title" @click="open = !open">Computed <span style="float: right">{{computeds.length}}</span></div>
       <div 
         v-if="open"
-        v-for="method in functions" 
+        v-for="computed in computeds" 
         class="list-content"
-        @click="select(method)"
+        @click="select(computed)"
         >
-        {{method.name}}
+        {{computed.name}}
       </div>
         
     </label>
@@ -23,13 +23,13 @@
       }
     },
     methods: {
-      select(method) {
-        this.$emit('select', {start: method.range[0], end: method.range[1], offset: 'script'})
+      select(computed) {
+        this.$emit('select', {start: computed.range[0], end: computed.range[1], offset: 'script'})
         
       }
     },
     computed: {
-      functions() {
+      computeds() {
         if (!this.parsed || !this.parsed.properties) return []
 
         let result = []
@@ -41,7 +41,7 @@
         return result
       }
     },
-    name: 'methods-editor'
+    name: 'computed-editor'
   }
 </script>
 

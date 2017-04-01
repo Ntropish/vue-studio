@@ -17,10 +17,10 @@ const router = new Router({
 })
 
 /* eslint-disable no-new */
-new Vue({
+let vueInstance = new Vue({
   router,
   ...App
 }).$mount('#app')
 
 import menuMaker from './menus'
-menuMaker()
+menuMaker({router})

@@ -10,6 +10,11 @@ export default [
     component: require('components/StudioPageView')
   },
   {
+    path: '/studio-two',
+    name: 'studio-page-two',
+    component: require('components/StudioTwo/StudioTwo')
+  },
+  {
     path: '*',
     redirect: '/'
   }

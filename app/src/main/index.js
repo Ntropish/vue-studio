@@ -34,7 +34,13 @@ function createWindow () {
       })
   }})
 
+  let goHome = new MenuItem({label: 'Home', click() {
+      app.emit('go-home')
+  }})
+  
+  fileMenu.submenu.append(goHome);
   fileMenu.submenu.append(loadProjectItem);
+  
 
   global.store = {
     project: ''

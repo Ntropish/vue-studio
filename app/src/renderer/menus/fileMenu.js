@@ -8,8 +8,13 @@ let {app} = remote
 
 import * as types from '../vuex/mutation-types'
 
-export default function linkMenu() {
+export default function linkMenu({router}) {
   app.on('project-was-set', function() {
     store.dispatch('loadProject')
+  })
+
+  console.log(router)
+  app.on('go-home', function() {
+    router.push('/')
   })
 }

@@ -4,6 +4,7 @@
     <li><a href="http://electron.atom.io/">electron</a></li> |
     <li><a href="http://vuejs.org/">vue.js</a></li> |
     <li><router-link to="studio">Studio</router-link></li>
+    <li><router-link to="studio-two">Studio Two</router-link></li>
   </ul>
 </template>
 

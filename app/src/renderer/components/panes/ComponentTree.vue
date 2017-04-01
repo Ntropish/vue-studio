@@ -1,13 +1,13 @@
 <template>
     <label class="nameEditor">
-      <div class="list-title" @click="open = !open">Methods <span style="float: right">{{functions.length}}</span></div>
+      <div class="list-title" @click="open = !open">Components <span style="float: right">{{components.length}}</span></div>
       <div 
         v-if="open"
-        v-for="method in functions" 
+        v-for="component in components" 
         class="list-content"
-        @click="select(method)"
+        @click="select(component)"
         >
-        {{method.name}}
+        {{component.name}}
       </div>
         
     </label>
@@ -23,18 +23,21 @@
       }
     },
     methods: {
-      select(method) {
-        this.$emit('select', {start: method.range[0], end: method.range[1], offset: 'script'})
+      select(component) {
+        this.$emit('select', {start: component.range[0]+1, end: component.range[1], offset: 'script'})
         
       }
     },
     computed: {
-      functions() {
+      components() {
+        console.log(this.parsed)
         if (!this.parsed || !this.parsed.properties) return []
 
         let result = []
 
         this.parsed.properties.forEach(p=>{
+          console.log(p)
+
           result.push({name: p.key.name, range: p.range})
         })
 
@@ -46,11 +49,5 @@
 </script>
 
 <style scoped>
-input {
-  background: none;
-  border: none;
-  font-size: 1.6em;
-  padding: 0.2em;
-  color: white;
-}
+
 </style>

@@ -1,28 +1,20 @@
 <template>
     <div class="dotVueEditor">
         <div class="workspace">
-            <pre><code>{{script}}</code></pre>    
+            <pre><code>{{selectedCode}}</code></pre>    
         </div>
         <div class="menu">
             <name-editor :parsed="componentName" @input="updateFile"></name-editor>
-            <methods-editor :parsed="componentMethods" @intput="updateFile"></methods-editor>
-            
-            <div>props: {{componentProps}}</div>
-            <div>Components: {{componentComponents}}</div>
-            <div>Computed: {{componentComputed}}</div>
+            <methods-editor :parsed="componentMethods" @select="selectPortion"></methods-editor>
+            <props-selector :parsed="componentProps" @select="selectPortion"></props-selector>
+            <components-editor :parsed="componentComponents" @select="selectPortion"></components-editor>
+            <computed-selector :parsed="componentComputed" @select="selectPortion"></computed-selector>
+            <data-selector :parsed="componentData" @select="selectPortion"></data-selector>
         </div>
     </div>
 </template>
 
 <script>
-    // <collapsible-menu :items="componentProperties">
-    //     <template scope="props" slot="item-title">
-    //         {{props.item.type}}
-    //     </template>
-    //     <template scope="props" slot="content">
-    //         {{props.item.value}}
-    //     </template>
-    // </collapsible-menu>
     import { mapState } from 'vuex'
 
     import esprima from 'esprima'
@@ -30,6 +22,11 @@
 
     import NameEditor from '../NameEditor'
     import MethodsEditor from '../MethodsEditor'
+    import PropsSelector from '../PropsSelector'
+    import ComponentsEditor from '../ComponentsEditor'
+    import ComputedSelector from '../ComputedSelector'
+    import DataSelector from '../DataSelector'
+    
 
     export default {
         props: ['code', 'selectedComponentPropertyLocator'],
@@ -45,26 +42,41 @@
                 let selected = this.$store.state.selected.item
                     console.log(selected) 
             },
+
             matchTag(tag) {
                 let lazyTagMatcher = new RegExp(`<${tag}.*?>((.|\n)*)?<\/${tag}>`, 'm')
                 let match = this.currentCode.match(lazyTagMatcher)
-
                 return match
             },
+
             updateFile(updateInstructions) {
 
-                let computedOffset = 0
+                let computedOffset = this.getOffset(updateInstructions.offset)
 
-                if (typeof updateInstructions.offset === 'string') {
-                    if (updateInstructions.offset === 'script') {
-                        computedOffset = this.scriptIndex
-                    }
-                }
                 let before = this.currentCode.slice(0, updateInstructions.start + computedOffset +2)
                 let middle = updateInstructions.value
                 let after = this.currentCode.slice(updateInstructions.end + computedOffset)
                 this.currentCode = before + middle + after
             },
+            
+            selectPortion(selectInstructions) {
+                let computedOffset = this.getOffset(selectInstructions.offset)
+                this.selected = {
+                    start: selectInstructions.start + computedOffset,
+                    end: selectInstructions.end + computedOffset +1,
+                    }
+            },
+
+            getOffset(offset) {
+                if (typeof offset === 'string') {
+                    if (offset === 'script') {
+                        return this.scriptIndex
+
+                    }
+                }
+                return 0
+            },
+
         },
         computed: {
             template() {
@@ -118,7 +130,7 @@
                 if (!this.componentProperties.props) return
 
                 if (this.componentProperties.props.type === 'ArrayExpression') {
-                    return this.componentProperties.props.elements.map((element)=>element.value)
+                    return this.componentProperties.props
                 } else {
                     return 'UNHANDLED'
                 }
@@ -132,10 +144,7 @@
 
             componentComponents() {
                 if (!this.componentProperties.components) return
-                
-                if (this.componentProperties.components.type === "ObjectExpression") {
-                    return this.componentProperties.components.properties.map(e=>e.key.name)
-                }
+
                 return this.componentProperties.components
                 
             },
@@ -150,15 +159,17 @@
                 return this.componentProperties.computed
             },
 
-            selectedComponentProperty() {
-                if (!this.selectedComponentPropertyLocator) {
-                    return null
+            componentData() {
+                if (!this.componentProperties.data) return
+
+                return this.componentProperties.data
+            },
+
+            selectedCode() {
+                if (!this.selected) {
+                    return ''
                 }
-
-                let type = this.selectedComponentPropertyLocator.type
-                let name = this.selectedComponentPropertyLocator.name
-
-                return componentProperties[type][name]
+                return this.currentCode.slice(this.selected.start, this.selected.end)
             }
         },
 
@@ -166,11 +177,17 @@
             CollapsibleMenu,
             NameEditor,
             MethodsEditor,
+            PropsSelector,
+            ComponentsEditor,
+            ComputedSelector,
+            DataSelector,
         },
 
         watch: {
             code() {
+                console.log('new code:', this.code)
                 this.currentCode = this.code
+                this.selected = null
             }
         },
         name: 'dot-vue-editor',
