@@ -59,18 +59,5 @@
 </script>
 
 <style scoped>
-.title {
-    font-size: 1.4em;
-    padding: 0.3em;
-    background: rgba(255,255,255,0.05);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    cursor: pointer;
-}
-.title:hover {
-    background: rgba(255,255,255,0.06);
-}
-.content {
-    font-size: 1.2em;
-    padding: 0.3em;
-}
+
 </style>

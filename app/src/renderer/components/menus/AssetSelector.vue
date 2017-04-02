@@ -1,19 +1,7 @@
 <template>
     <div class="list-menu">
 
-        <list-menu-item 
-            @click="toggleOpen('project')"
-            :open="openedMenus.project"
-            title="Project">
-            <project-menu></project-menu>
-        </list-menu-item>
-
-        <list-menu-item 
-            @click="toggleOpen('components')"
-            :open="openedMenus.components"
-            title="Components">
-            <component-menu></component-menu>
-        </list-menu-item>
+        <component-menu></component-menu>
 
         <list-menu-item 
             @click="toggleOpen('directives')"

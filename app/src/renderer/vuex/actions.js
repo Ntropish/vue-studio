@@ -3,9 +3,6 @@ import {remote} from 'electron'
 
 import * as types from './mutation-types'
 
-import * as fileMenu from './actions/fileMenu'
-
-
 export const decrementMain = ({ commit }) => {
   commit(types.DECREMENT_MAIN_COUNTER)
 }
@@ -26,8 +23,6 @@ export const select = ({commit}, data) => {
       commit(types.SET_SELECTED, data)
   }
 }
-
-export const loadProject = fileMenu.loadProject
 
 
 

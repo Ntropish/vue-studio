@@ -1,6 +1,11 @@
 <template>
     <div>
-        <h3 class="title" @click="clickHandler" >{{ title }}</h3>
+        <div class="title" @click="clickHandler" >
+            <slot name="title">
+                <h3>{{ title }}</h3>    
+            </slot>
+        </div>
+
         <div class="content" v-if="open">
             <slot></slot>        
         </div>
@@ -9,11 +14,15 @@
 
 <script>
     export default {
-        props: ['title', 'open'],
+        props: ['title', 'startOpen'],
+        data() {
+            return {
+                open: this.startOpen4
+            }
+        },
         methods: {
             clickHandler() {
-                // Consider this item clicked only when the header is clicked
-                this.$emit('click')
+                this.open = !this.open
             }
         },
         name: 'list-menu-item'

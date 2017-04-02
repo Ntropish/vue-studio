@@ -1,18 +1,23 @@
 <template>
   <div class="studio-two-layout">
-    <asset-selector></asset-selector>
-    <component-tree></component-tree>
+    <div>
+      <asset-selector></asset-selector>
+      <navigator></navigator>  
+    </div>
+    <property-editor></property-editor>
   </div>
 </template>
 
 <script>
-  import ComponentTree from '../panes/ComponentTree'
+  import PropertyEditor from 'renderer/components/panes/PropertyEditor'
   import AssetSelector from 'renderer/components/menus/AssetSelector'
+  import Navigator from 'renderer/components/panes/Navigator'
 
   export default {
     components: {
-      ComponentTree,
-      AssetSelector
+      PropertyEditor,
+      AssetSelector,
+      Navigator
     },
     name: 'studio-page-two'
   }
