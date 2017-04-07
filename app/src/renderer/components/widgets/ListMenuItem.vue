@@ -17,7 +17,7 @@
         props: ['title', 'startOpen'],
         data() {
             return {
-                open: this.startOpen4
+                open: this.startOpen
             }
         },
         methods: {

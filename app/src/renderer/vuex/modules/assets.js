@@ -7,7 +7,7 @@ import Component from 'renderer/classes/Component'
 
 function defaultState() {
     return {
-        component: [],
+        component: [{name: 'Hey'}],
         directive: [],
         filter: [],
     }

@@ -1,11 +1,14 @@
 <template>
-  <div class="studio-two-layout">
-    <div>
+  <v-app left-fixed-sidebar top-toolbar>
+
+    <main>
+    <v-sidebar v-model="sidebarOpen" fixed>
       <asset-selector></asset-selector>
       <navigator></navigator>  
-    </div>
-    <property-editor></property-editor>
-  </div>
+    </v-sidebar>
+      <property-editor></property-editor>
+    </main>
+  </v-app>
 </template>
 
 <script>
@@ -14,6 +17,11 @@
   import Navigator from 'renderer/components/panes/Navigator'
 
   export default {
+    data() {
+      return {
+        sidebarOpen: true
+      }
+    },
     components: {
       PropertyEditor,
       AssetSelector,
@@ -24,22 +32,15 @@
 </script>
 
 <style scoped>
-  .studio-two-layout {
+  .studio {
     display: flex;
-    background: rgb(50,50,55);
     width: 100%;
     height: 100%;
   }
-  .asset-selectors {
-    flex: 0 0.5 18em;
-    background: rgba(0,0,0,0.2);
+  .left {
+    flex: 0 0 18em;
   }
-  .editor {
+  .right {
     flex: 1 1 15em;
-    background: rgba(0,0,0,0.1);
-  }
-  .context-menu {
-    flex: 0 0.5 15em;
-    background: rgba(0,0,0,0.2);    
   }
 </style>

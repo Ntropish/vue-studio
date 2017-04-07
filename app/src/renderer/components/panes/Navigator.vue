@@ -14,13 +14,12 @@
   export default {
     computed: {
       ...mapState({
-        selected: state => state.selected.item
+        component: state => {
+            let item = state.selected.item
+            if (item) return item
+            return {name: 'hardcodedComponent'}
+          }
       }),
-      component() {
-        if (this.selected && this.selected.constructor === Component) return this.selected
-        return {name: 'hardcodedComponent'}
-      },
-
     },
     components: {
       MicroNavigator,
@@ -30,7 +29,5 @@
 </script>
 
 <style scoped>
-  .navigator {
-        border: 1px solid rgba(255,255,255,0.1);
-  }
+
 </style>

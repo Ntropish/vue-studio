@@ -4,33 +4,55 @@ import Vue from 'Vue'
 
 const state = {
     item: null,
-    property: {},
+    property: null,
 }
 
 const mutations = {
-    [types.SET_SELECTED] (state, newSelectedThing) {
-        console.log('SET SELECTED:', newSelectedThing)
-
+    SET_SELECTED(state, newSelectedThing) {
         state.item = newSelectedThing
-        Vue.set(state, 'item', newSelectedThing)
     },
-    UPDATE_SELECTED(state, {type, name, value}) {
-        console.log('UPDATE SELECTED:', type, name, value)
-
+    UPDATE_SELECTED(state, {path, value}) {
         if (!state.item) throw new Error(`No item selected while trying to update`)
-        if (!state.item[type]) throw new Error(`Missing property type: ${type}`)
 
-        let key = name || type
-        let object = state.item
-        if (name) object = object[type]
+        // Track this so the selected item observer can be walked over again
+        let newProp = false
 
-        Vue.set(object, key, value)
+        // Dereference the selected item for each thing in the path
+        let reference = path.slice(0, -1).reduce((reference, key)=>{
+            if (checkReference(reference, key)) {
+                return reference[key]
+            }
 
+            // newProp = true
+            Vue.set(reference, key, {})
+            // reference[key] = {}
+
+            return reference[key]
+
+        }, state.item)
+
+        let lastProperty = path.slice(-1)[0]
+        
+        if (!checkReference(reference, lastProperty)) {
+            // newProp = true
+            Vue.set(reference, lastProperty, value)
+        } else {
+            reference[lastProperty] = value
+        }
+        // reference[lastProperty] = value
+        // Vue.set(reference, lastProperty, value)
+
+        // if (newProp) {
+        //     state.item = Object.assign({}, state.item)
+        // }
+
+        function checkReference(reference, key) {
+            if (typeof reference !== 'object') throw new Error(`Invalid key ${key} at path: ${path.join('->')}`)
+            if (reference.hasOwnProperty(key)) return true
+        }
     },
-    SELECT_PROPERTY(state, property) {
-        console.log('SELECTED PROPERTY', property)
-
-        Vue.set(state, 'property', property)
+    SELECT_PROPERTY(state, {type, name}) {
+        state.property = {type, name}
     }
 }
 

@@ -1,16 +1,25 @@
 <template>
-    <list-menu-item ref="menuItem">
-        <h3 slot="title">
+    <v-list-item ref="menuItem" start-open="true">
+        <v-list-tile slot="title" class="title" @click.native="open = !open">
             Components
-            <button @click.stop="addComponent()">&nbsp;+&nbsp;</button>
-        </h3>
-        <div class="component" v-for="component in components" @click="select(component)">
-            {{component.name}}
-        </div>
-    </list-menu-item>
+            
+            <v-btn floating small @click.native.stop="addComponent">
+                <v-icon class="black--text">add</v-icon>
+            </v-btn>            
+            
+        </v-list-tile>
+
+        <v-list v-if="open">
+            <v-list-item class="component" v-for="component in components" @click="select(component)">
+                <v-list-tile :class="component !== selected? 'grey--text':''">{{component.name}}</v-list-tile>
+            </v-list-item>
+        </v-list>
+        
+    </v-list-item>
 </template>
 
 <script>
+
     import * as types from 'renderer/vuex/mutation-types'
     import { mapState } from 'vuex'
     import FileDisplay from '../widgets/fileDisplay'
@@ -21,6 +30,11 @@
 
 
     export default {
+        data() {
+            return {
+                open: true
+            }
+        },
         methods: {
             select(thingToSelect) {
                 this.$store.commit(types.SET_SELECTED, thingToSelect)
@@ -34,7 +48,8 @@
             }
         },
         computed: mapState({
-            components: state => state.assets.component
+            components: state => state.assets.component,
+            selected: state => state.selected.item
         }),
         components: {
             FileDisplay,
@@ -45,8 +60,4 @@
 </script>
 
 <style scoped>
-    .component {
-        padding: 0.2em;
-        font-size: 1.2em;
-    }
 </style>

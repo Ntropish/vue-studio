@@ -1,8 +1,11 @@
 <template>
   <div>
-    {{selected}}
-  
-    <computed-editor v-if="property.type === 'computed'" v-model="selectedProperty"></computed-editor>
+    Selected: {{selected}}
+    </br>
+    Property: {{property}}
+    </br>
+    Selected Property: {{selectedProperty}}
+    <function-editor v-if="property.type === 'computed'" v-model="selectedProperty"></function-editor>
     <div v-if="!editor">
       No Property Selected
     </div>
@@ -12,7 +15,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import ComputedEditor from 'renderer/components/panes/editors/ComputedEditor'
+  import FunctionEditor from 'renderer/components/panes/editors/FunctionEditor'
   import DataEditor from 'renderer/components/panes/editors/DataEditor'
   import MethodEditor from 'renderer/components/panes/editors/MethodEditor'
 
@@ -24,16 +27,17 @@
       },
       selectedProperty: {
         get() {
+          if (!this.selected || !this.property) return null
           let result = this.selected[this.property.type]
           if (this.property.name) result = result[this.property.name]
           return result
         },
-        set(e) {
-          let value = e.target.value
+        set(value) {
+          console.log('setting', value)
           let type = 'computed'
           let name = this.property.name
           
-          this.$store.commit('UPDATE_SELECTED', {type, name, value})
+          this.$store.commit('UPDATE_SELECTED', {path: [type, name], value})
         }
       },
       ...mapState({
@@ -41,12 +45,12 @@
           return state.selected.item
         },
         property: state=>{
-          return state.selected.property
+          return state.selected.property || {type: null}
         }
       })
     },
     components: {
-      ComputedEditor,
+      FunctionEditor,
       DataEditor,
       MethodEditor,
     },

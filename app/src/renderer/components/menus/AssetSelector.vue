@@ -1,24 +1,34 @@
 <template>
-    <div class="list-menu">
+    <v-list class="assetSelector  text--lighten-2">
 
         <component-menu></component-menu>
+        
+        <v-list-item
+        @click="toggleOpen('directives')">
+            <v-list-tile class="title">
+                Directives
+            </v-list-tile>
+            </v-list-item>
+            <v-list-item v-if="openedMenus.directives">
+                <v-list-tile>
+                    I am open on Directives
+                </v-list-tile>
+        </v-list-item>
 
-        <list-menu-item 
-            @click="toggleOpen('directives')"
-            :open="openedMenus.directives"
-            title="Directives">
-            I am open on Directives
-        </list-menu-item>
-
-        <list-menu-item 
-            @click="toggleOpen('filters')"
-            :open="openedMenus.filters"
-            title="Filters">
-            I am open on filters
-        </list-menu-item>
+        <v-list-item
+        @click="toggleOpen('filters')">
+        <v-list-tile class="title">
+            Filters
+        </v-list-tile>
+        </v-list-item>
+        <v-list-item v-if="openedMenus.filters">
+            <v-list-tile>
+                I am open on Filters
+            </v-list-tile>
+        </v-list-item>
 
 
-    </div>
+    </v-list>
 </template>
 
 <script>
@@ -62,4 +72,7 @@
 </script>
 
 <style scoped>
+  .assetSelector {
+    width: 100%;  
+  }
 </style>
