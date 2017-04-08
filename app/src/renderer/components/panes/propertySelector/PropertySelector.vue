@@ -17,13 +17,7 @@
       <div @click="selectProperty('data')">data</div>
 
       <v-list-item ref="menuItem" start-open="true">
-        <v-list-tile class="title" slot="title">
-          Computed
-          <button @click.stop="addComputed()">&nbsp;+&nbsp;</button>
-        </v-list-tile>
-        <v-list-tile v-for="computed in Object.keys(computeds)" @click.native="selectProperty({type: 'computed', name: computed})">
-          Computed name: {{computed}}
-        </v-list-tile>
+        <computed-selector :computeds="computeds"></computed-selector>
       </v-list-item>
       
       <v-list-item class="title">
@@ -48,8 +42,9 @@
 </template>
 
 <script>
-  import ListMenuItem from '../widgets/ListMenuItem'
   import {mapstate} from 'vuex'
+
+  import ComputedSelector from './ComputedSelector'
 
   export default {
     props: ['component'],
@@ -60,7 +55,8 @@
           props: false,
           methods: false,
           watch: false,
-        }
+        },
+        editName: {}
       }
     },
     methods: {
@@ -71,12 +67,6 @@
       selectProperty(property) {
         this.$store.commit('SELECT_PROPERTY', property)
       },
-      addComputed() {
-        this.$store.commit('UPDATE_SELECTED', {
-          path: ['computed', 'computedValue'],
-          value: {arguments: [], code: ''}
-        })
-      }
     },
     computed: {
       name: {
@@ -84,19 +74,21 @@
           return this.component.name
         },
         set(value) {
-          this.$store.commit('UPDATE_SELECTED', {
+          this.$store.commit('MODIFY_SELECTED', {
             path: ['name'],
             value
           })
         }
       },
       computeds() {
+        
         let result = this.component && this.component.computed || {}
+        console.log('NEW COMPUTEDS!', result)
         return result
       }
     },
     components: {
-      ListMenuItem,
+      ComputedSelector
     },
     name: 'property-selector'
   }

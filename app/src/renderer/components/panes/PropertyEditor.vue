@@ -5,7 +5,7 @@
     Property: {{property}}
     </br>
     Selected Property: {{selectedProperty}}
-    <function-editor v-if="property.type === 'computed'" v-model="selectedProperty"></function-editor>
+    <function-editor v-if="property[0] === 'computed'" v-model="selectedProperty"></function-editor>
     <div v-if="!editor">
       No Property Selected
     </div>
@@ -27,25 +27,26 @@
       },
       selectedProperty: {
         get() {
-          if (!this.selected || !this.property) return null
-          let result = this.selected[this.property.type]
-          if (this.property.name) result = result[this.property.name]
-          return result
+          if (!this.selected || !this.property.length) return null
+
+          // Dereference for every item in the path
+          let finalProperty =  this.property.reduce((p,c)=>{
+            return p[c]
+          }, this.selected)
+
+          console.log('Edit this:', finalProperty)
+          return finalProperty
         },
         set(value) {
-          console.log('setting', value)
-          let type = 'computed'
-          let name = this.property.name
-          
-          this.$store.commit('UPDATE_SELECTED', {path: [type, name], value})
+          this.$store.commit('MODIFY_SELECTED', {path: this.property, value})
         }
       },
       ...mapState({
         selected: state=>{
-          return state.selected.item
+          return state.assets.selected
         },
         property: state=>{
-          return state.selected.property || {type: null}
+          return state.assets.selectedProperty || []
         }
       })
     },

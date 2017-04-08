@@ -15,9 +15,9 @@
     computed: {
       ...mapState({
         component: state => {
-            let item = state.selected.item
+            let item = state.assets.selected
             if (item) return item
-            return {name: 'hardcodedComponent'}
+            return {name: 'Nothing Selected Component'}
           }
       }),
     },

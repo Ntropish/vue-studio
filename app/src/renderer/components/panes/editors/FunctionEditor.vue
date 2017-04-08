@@ -1,6 +1,6 @@
 <template>
   <div class="functionEditor">
-    <span v-for="(arg, index) in tempArgs">
+    <span v-for="(arg, index) in args">
       <v-chip close @input="removeArg(index)">{{arg}}</v-chip>
     </span>
     <v-text-field
@@ -10,7 +10,13 @@
       label="Add argument"
       single-line
     ></v-text-field>
-    <textarea v-model="tempCode" @input="onInput"></textarea>
+    <v-text-field
+      name="input-7-1"
+      label="Function body"
+      :value="code"
+      @input="onInput"
+      multi-line
+    ></v-text-field>
   </div>
   
 </template>
@@ -24,23 +30,29 @@
       console.log(this.value)
       return {
         argInput: '',
-        tempArgs: this.value && this.value.args && this.value.args.slice() || [],
-        tempCode: this.value.code || ''
+      }
+    },
+    computed: {
+      args() {
+        let args = this.value && this.value.arguments && this.value.arguments.slice() || []
+      
+        return args
+      },
+      code() {
+        return this.value && this.value.code || ''
       }
     },
     methods: {
-      onInput() {
-        this.$emit('input', {arguments: this.tempArgs.slice() , code: this.tempCode})
+      onInput(value) {
+        this.$emit('input', {arguments: this.args , code: value})
       },
       addArg() {
-        this.tempArgs.push(this.argInput)
-        this.argInput = ''
-        this.onInput()
+        this.$emit('input', {arguments: this.args.concat(this.argInput) , code: this.code})
+        this.argInput = ''        
       },
       removeArg(index) {
-        console.log(index)
-        this.tempArgs.splice(index, 1)
-        this.onInput()
+        this.args.splice(index, 1)
+        this.$emit('input', {arguments: this.args, code: this.code})
       }
     },
     name: 'function-editor'
@@ -49,6 +61,8 @@
 
 <style scoped>
 .functionEditor {
+  font-family: Consolas;
+  
   height: 100%;
 }
 textarea {

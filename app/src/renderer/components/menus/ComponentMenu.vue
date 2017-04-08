@@ -37,7 +37,7 @@
         },
         methods: {
             select(thingToSelect) {
-                this.$store.commit(types.SET_SELECTED, thingToSelect)
+                this.$store.commit('SELECT_ASSET', thingToSelect)
             },
             addComponent() {
                 this.$store.commit('ADD_ASSET', new Component({name: 'hello'}))
@@ -49,7 +49,7 @@
         },
         computed: mapState({
             components: state => state.assets.component,
-            selected: state => state.selected.item
+            selected: state => state.assets.selected
         }),
         components: {
             FileDisplay,

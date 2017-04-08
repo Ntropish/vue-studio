@@ -10,7 +10,7 @@
 
 <script>
 
-  import PropertySelector from './PropertySelector'
+  import PropertySelector from './propertySelector/PropertySelector'
   export default {
     props: ['component', 'path'],
     methods: {
