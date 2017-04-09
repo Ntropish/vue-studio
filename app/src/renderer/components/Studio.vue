@@ -6,7 +6,12 @@
       <asset-selector></asset-selector>
       <navigator></navigator>  
     </v-sidebar>
-      <property-editor></property-editor>
+    <v-content class="ma-3">
+      <v-container fluid>
+        <property-editor></property-editor>
+      </v-container>
+    </v-content>
+      
     </main>
   </v-app>
 </template>

@@ -1,11 +1,11 @@
 <template>
     <div class="navigator">
-      <micro-navigator :component="component"></micro-navigator>
+      <micro-navigator :component="selected"></micro-navigator>
     </div>
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
 
   import Component from 'renderer/classes/Component'
 
@@ -14,12 +14,10 @@
   export default {
     computed: {
       ...mapState({
-        component: state => {
-            let item = state.assets.selected
-            if (item) return item
-            return {name: 'Nothing Selected Component'}
-          }
       }),
+      ...mapGetters({
+        selected:'select/GET_ASSET'
+      })
     },
     components: {
       MicroNavigator,

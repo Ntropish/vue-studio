@@ -1,10 +1,8 @@
 <template>
     <div class="microNavigator">
       <div>breadcrumbs</div>
-      <property-selector :component="_component"></property-selector>
-      <div v-for="child in component.components">
-        Child: {{child}}
-      </div>
+      <property-selector v-if="component" :component="component"></property-selector>
+
     </div>
 </template>
 
@@ -16,11 +14,11 @@
     methods: {
       select(thing) {
         console.log('select in micro', thing)
-      }
+      },
     },
     computed: {
-      _component() {
-        return this.component || {name: 'add the path'}
+      components() {
+        return this.component && this.component.components || []
       }
     },
     components: {

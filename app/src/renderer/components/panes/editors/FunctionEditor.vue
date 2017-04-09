@@ -1,6 +1,6 @@
 <template>
   <div class="functionEditor">
-    <span v-for="(arg, index) in args">
+    <span v-for="(arg, index) in func.arguments">
       <v-chip close @input="removeArg(index)">{{arg}}</v-chip>
     </span>
     <v-text-field
@@ -13,7 +13,7 @@
     <v-text-field
       name="input-7-1"
       label="Function body"
-      :value="code"
+      :value="func.body"
       @input="onInput"
       multi-line
     ></v-text-field>
@@ -22,37 +22,35 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+  import { mapState } from 'vuex'
 
   export default {
-    props: ['value'],
+    props: ['id'],
     data() {
-      console.log(this.value)
       return {
         argInput: '',
       }
     },
     computed: {
-      args() {
-        let args = this.value && this.value.arguments && this.value.arguments.slice() || []
-      
-        return args
-      },
-      code() {
-        return this.value && this.value.code || ''
-      }
+      ...mapState({
+        func: function(state) {
+          return state.functions.items[this.id]
+
+        }
+      }),
     },
     methods: {
-      onInput(value) {
-        this.$emit('input', {arguments: this.args , code: value})
+      onInput(body) {
+        this.$store.commit('functions/SET_BODY', {id: this.id, body})
       },
+
       addArg() {
-        this.$emit('input', {arguments: this.args.concat(this.argInput) , code: this.code})
+        this.$store.commit('functions/ADD_ARGUMENT', {id: this.id, value: this.argInput})
         this.argInput = ''        
       },
+
       removeArg(index) {
-        this.args.splice(index, 1)
-        this.$emit('input', {arguments: this.args, code: this.code})
+        this.$store.commit('functions/REMOVE_ARGUMENT', {id: this.id, value: this.argInput})
       }
     },
     name: 'function-editor'

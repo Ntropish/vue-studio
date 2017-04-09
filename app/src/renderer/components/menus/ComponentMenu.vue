@@ -1,5 +1,5 @@
 <template>
-    <v-list-item ref="menuItem" start-open="true">
+    <v-list-item start-open="true">
         <v-list-tile slot="title" class="title" @click.native="open = !open">
             Components
             
@@ -11,7 +11,9 @@
 
         <v-list v-if="open">
             <v-list-item class="component" v-for="component in components" @click="select(component)">
-                <v-list-tile :class="component !== selected? 'grey--text':''">{{component.name}}</v-list-tile>
+                <v-list-tile v-if="component" :class="component !== selected? 'grey--text':''">
+                    <editable-span :value="component.name" @input="setName(component.id, $event)"></editable-span>
+                </v-list-tile>
             </v-list-item>
         </v-list>
         
@@ -21,13 +23,8 @@
 <script>
 
     import * as types from 'renderer/vuex/mutation-types'
-    import { mapState } from 'vuex'
-    import FileDisplay from '../widgets/fileDisplay'
-
-    import ListMenuItem from '../widgets/ListMenuItem'
-
-    import Component from 'renderer/classes/Component'
-
+    import { mapState, mapGetters } from 'vuex'
+    import EditableSpan from 'renderer/components/widgets/EditableSpan'
 
     export default {
         data() {
@@ -36,24 +33,26 @@
             }
         },
         methods: {
-            select(thingToSelect) {
-                this.$store.commit('SELECT_ASSET', thingToSelect)
+            select({id}) {
+                this.$store.commit('select/ASSET', {from: 'components', id})
             },
             addComponent() {
-                this.$store.commit('ADD_ASSET', new Component({name: 'hello'}))
-                this.$refs.menuItem.open = true
+                this.$store.dispatch('components/ADD', {name: 'Hello From Component Menu'})
             },
-            logComponents() {
-                console.log(this.components)
-            }
+            setName(id, value) {
+                this.$store.commit('components/SET_PROPERTY', {id, name: 'name', value})
+            },
         },
-        computed: mapState({
-            components: state => state.assets.component,
-            selected: state => state.assets.selected
-        }),
+        computed: { 
+            ...mapState({
+                components: state => state.components.items
+            }),
+            ...mapGetters({
+                selected:'select/GET_ASSET'
+            }),
+        },
         components: {
-            FileDisplay,
-            ListMenuItem,
+            EditableSpan
         },
         name: 'component-menu'
   }
