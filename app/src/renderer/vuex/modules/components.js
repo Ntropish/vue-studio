@@ -14,8 +14,8 @@ const mutations = {
   REMOVE(state, {id}) {
     Vue.set(state.items, id, null)
   },
-  _ADD_PROPERTY(state, {to, id, newFunction}) {
-    state.items[id][to].push(newFunction.id)
+  _ADD_PROPERTY(state, {to, id, value}) {
+    state.items[id][to].push(value.id)
   },
   REMOVE_PROPERTY(state, {type, id, propertyId}) {
     let props = state.items[id][type]
@@ -24,6 +24,9 @@ const mutations = {
   },
   SET_PROPERTY(state, {id, name, value}) {
     state.items[id][name] = value
+  },
+  SET_TEMPLATE(state, {id, value}) {
+    state.items[id].template.text = value
   }
 }
 
@@ -32,7 +35,16 @@ const actions = {
     return dispatch('functions/ADD', construct, {root: true})
     .then(
       function applyNewFunctionToComponent(newFunction) {
-        return commit('_ADD_PROPERTY', {to, id, newFunction})
+        return commit('_ADD_PROPERTY', {to, id, value: newFunction})
+      })
+  },
+
+  ADD_PROP({dispatch, commit}, {id, construct}) {
+    return dispatch('props/ADD', construct, {root: true})
+    .then(
+      function applyNewFunctionToComponent(newProp) {
+        console.log(newProp)
+        return commit('_ADD_PROPERTY', {to: 'props', id, value: newProp})
       })
   },
 

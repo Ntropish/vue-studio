@@ -9,11 +9,7 @@
 <script>
     import { mapState } from 'vuex'
 
-    import ListMenuItem from '../widgets/ListMenuItem'
     export default {
-        components: {
-            ListMenuItem,
-        },
         data() {74
             return {
                 openedMenus: [

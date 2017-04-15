@@ -1,7 +1,8 @@
 <template>
   <div>
-    EDITOR
     <function-editor v-if="editorFor === 'functions'" :id="id"></function-editor>
+    <prop-editor v-if="editorFor === 'props'" :id="id"></prop-editor>
+    <template-editor v-if="editorFor === 'template'" :id="id"></template-editor>
     <div v-if="!editorFor">
       No Property Selected
     </div>
@@ -12,8 +13,8 @@
 <script>
   import { mapState, mapGetters } from 'vuex'
   import FunctionEditor from 'renderer/components/panes/editors/FunctionEditor'
-  import DataEditor from 'renderer/components/panes/editors/DataEditor'
-  import MethodEditor from 'renderer/components/panes/editors/MethodEditor'
+  import PropEditor from 'renderer/components/panes/editors/PropEditor'
+  import TemplateEditor from 'renderer/components/panes/editors/TemplateEditor'
 
   export default {
     computed: {
@@ -24,15 +25,11 @@
       ...mapGetters({
         selected:'select/GET_PROPERTY'
       }),
-      selectored() {
-        console.log(selected)
-        return '2'
-      }
     },
     components: {
       FunctionEditor,
-      DataEditor,
-      MethodEditor,
+      PropEditor,
+      TemplateEditor,
     },
     name: 'property-editor'
   }

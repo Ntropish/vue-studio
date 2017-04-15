@@ -36,13 +36,11 @@
     import { mapActions } from 'vuex'
     import * as types from 'renderer/vuex/mutation-types'
 
-    import ListMenuItem from '../widgets/ListMenuItem'
     import ProjectMenu from './ProjectMenu'
     import ComponentMenu from './ComponentMenu'
     
     export default {
         components: {
-            ListMenuItem,
             ProjectMenu,
             ComponentMenu,
         },

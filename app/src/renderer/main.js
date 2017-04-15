@@ -7,12 +7,14 @@ import Vuetify from 'vuetify'
 import App from './App'
 import routes from './routes'
 
+import drag from './directives/drag'
+
 Vue.use(Electron)
 Vue.use(Resource)
 Vue.use(Router)
 Vue.config.debug = true
 
- 
+Vue.directive('drag', drag)
 Vue.use(Vuetify)
 
 const router = new Router({

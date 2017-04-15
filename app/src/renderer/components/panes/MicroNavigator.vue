@@ -8,7 +8,7 @@
 
 <script>
 
-  import PropertySelector from './propertySelector/PropertySelector'
+  import PropertySelector from './PropertySelector'
   export default {
     props: ['component', 'path'],
     methods: {
