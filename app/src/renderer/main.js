@@ -28,6 +28,20 @@ let vueInstance = new Vue({
   ...App
 }).$mount('#app')
 
+let init = [
+  store=>store.dispatch('components/ADD', {name: 'Hello From Component Menu'}),
+  store=>store.commit('select/ASSET', {from: 'components', id: 0}),
+  store=>{
+    let selectedId = store.state.select.asset.id
+    store.commit('select/PROPERTY', {from: 'template', id: selectedId})
+  }
+]
+
+quickStart(init)
+
+function quickStart(init) {
+  init.reduce((p, fn)=>p.then(fn.bind(null, vueInstance.$store)), Promise.resolve())
+}
 
 import menuMaker from './menus'
 menuMaker({router})

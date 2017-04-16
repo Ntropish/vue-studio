@@ -1,5 +1,3 @@
-import bind from './binder'
-document.binder = bind(document)
 export default {
 
   bind(el, binding) {
