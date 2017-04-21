@@ -1,8 +1,6 @@
 <template>
   <div class="templateEditor">
-    <div ref="box" style="width: 8em; height: 8em; background: red"></div>
-    <button @click="addListener">ADD</button>
-    <button @click="removeListener">REMOVE</button>
+
     </br>
     </br>
     <v-text-field
@@ -10,16 +8,12 @@
       v-model="modelText"
       multi-line
     ></v-text-field>
-    <template-element :node="rootNode"></template-element>
+    <template-element :node="rootNode" @input="writeNodes"></template-element>
   </div>
   
 </template>
 
 <script>
-
-  function handler(e) {
-    console.log('beep')
-  }
 
   import { mapState } from 'vuex'
 
@@ -60,12 +54,6 @@
       }
     },
     methods: {
-      addListener() {
-        this.$refs.box.addEventListener('mousedown', handler)
-      },
-      removeListener() {
-        this.$refs.box.removeEventListener('mousedown', handler)
-      },
       setText(value) {
         this.$store.commit('components/SET_TEMPLATE', {id: this.id, value})
       },
@@ -77,7 +65,7 @@
       writeNode(node) {
         if (node.type === 'tag') {
           let open = `<${node.data}>`
-          let body = node.children.map(this.writeNode).join('\n')
+          let body = (node.children || []).map(this.writeNode).join('\n')
           let close = `</${node.name}>`
 
           return `${open}\n\t${body}\n${close}`

@@ -1,26 +1,30 @@
 <template>
-  <div class="templateElement" :class="node.type" @click="log">
+  <div class="templateElement" :class="node.type" v-bind:style="dragStyle">
 
-    <div v-if="node.type === 'tag'">
-      <div class="tagHead" :class="node.name" v-drag>
+    <div v-if="node.type === 'tag'" contenteditable=false>
+      <div 
+      class="tagHead" 
+      :class="node.name" 
+      v-drag="'hey'" 
+      @up="up" 
+      @down="down" 
+      @drag="follow($event)"
+      >
         {{node.name}}
       </div>
-      <div class="tagBody">
+      <div class="tagBody" contenteditable>
         <template-element 
+          @input.native="onInput"
           class="child" 
           v-for="child in node.children" 
           :node="child"
           v-if="!isEmpty(child)"></template-element>
       </div>
-      
-      
     </div>
 
-    <div v-if="node.type === 'text'">
+    <div v-if="node.type === 'text'" @input="onInput">
       {{node.data}}
     </div>
-
-
 
   </div>
   
@@ -33,18 +37,50 @@
     props: ['node'],
     data() {
       return {
+        dragging: false,
+        top: 0,
+        left: 0,
+        baseTop: 0,
+        baseLeft: 0,
       }
     },
     computed: {
+      dragStyle() {
+        let obj = {
+          position: this.dragging? 'relative' :null,          
+          left: this.left? this.left+'px':null,
+          top: this.top? this.top+'px':null,
+        }
+        return obj
+      }
     },
     methods: {
-      log() {
-        console.log(this.node)
+      log(thing) {
+        console.log(thing)
+      },
+      onInput(e) {
+        console.log(e.target)
+        this.$emit('input', e)
       },
       isEmpty(node) {
         return node.type === 'text' && /^\s*$/.test(node.data)
+      },
+      follow({detail}) {
+        this.top = detail.clientY - this.baseTop
+        this.left = detail.clientX - this.baseLeft
+      },
+      up({detail}) {
+        this.dragging = true
+        this.top = 0
+        this.left = 0
+        this.baseTop = detail.clientY
+        this.baseLeft = detail.clientX
+      },
+      down() {
+        this.dragging = false
+        this.top = null
+        this.left = null
       }
-
     },
     name: 'template-element'
   }

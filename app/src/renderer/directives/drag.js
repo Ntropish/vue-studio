@@ -1,35 +1,38 @@
-import bind from './binder'
-document.binder = bind(document)
+import onify from 'onify'
+
+onify(document)
+
 export default {
+  bind(el, binding, {context: {_uid: id}}) {
+    onify(el)
+    el.on.mousedown = downHandler
 
-  bind(el, binding) {
-    el.binder = bind(el)
-    document.binder = bind(document)
+    // Namespaced handler
+    document.on[id].mouseup = upHandler
 
-    // binders.set(el, new Proxy(el, ProxyHandler()))
-    // binders.set(document, new Proxy(document, ProxyHandler()))
+    function downHandler(e) {      
+      document.on[id].mousemove = moveHandler
 
-    // console.log('elget:', proxies.get(el))
-
-    el.binder.mousedown = downHandler;
-    // document.binder.namespaced.mouseup = upHandler;
-    document.binder.mouseup = upHandler;
-
-    function downHandler() {
-      console.log('down')
-      bind('insight')
+      // Kill default drag and drop
+      e.preventDefault()
+      el.dispatchEvent(new CustomEvent('up', {detail: e}))
+      
     }
 
-    function upHandler() {
-      return function anonUpper() {
-        console.log('up')
-      }
+    function moveHandler(e) {
+      el.dispatchEvent(new CustomEvent('drag', {detail: e}))
+    }
+
+    function upHandler(e) {
+      document.on[id].mousemove = null
+      e.target.dispatchEvent(new CustomEvent('drop', {detail: binding.value}))
+      el.dispatchEvent(new CustomEvent('down', {detail: e}))
+      
     }
   },
 
-  unbind(el) {
-    el.binder.clear()
-    document.binder.clear()
+  unbind(el, binding, {context: {_uid: id}}) {
+    el.on.clear()
+    document.on[id].clear()
   }
-
 }
