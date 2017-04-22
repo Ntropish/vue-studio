@@ -9,6 +9,8 @@
       multi-line
     ></v-text-field>
     <template-element :node="rootNode" @input="writeNodes"></template-element>
+
+    {{rootNode}}
   </div>
   
 </template>

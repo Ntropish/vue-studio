@@ -1,7 +1,7 @@
 <template>
   <div class="templateElement" :class="node.type" v-bind:style="dragStyle">
 
-    <div v-if="node.type === 'tag'" contenteditable=false>
+    <div contenteditable=false>
       <div 
       class="tagHead" 
       :class="node.name" 
@@ -13,18 +13,27 @@
         {{node.name}}
       </div>
       <div class="tagBody" contenteditable>
-        <template-element 
+        <span v-for="(child, index) in node.children" >
+
+          <template-element 
+          v-if="child.type === 'tag'"
           @input.native="onInput"
-          class="child" 
-          v-for="child in node.children" 
-          :node="child"
-          v-if="!isEmpty(child)"></template-element>
+          class="child taggo" 
+          :node="child"></template-element>
+
+          <span v-if="child.type === 'text'" class="texto" @input="onInput">
+            {{child.data}}
+          </span>
+
+          <span v-if="index === node.children.length-1 && child.type === 'tag'">
+
+          </span>
+
+        </span>
+
       </div>
     </div>
 
-    <div v-if="node.type === 'text'" @input="onInput">
-      {{node.data}}
-    </div>
 
   </div>
   
@@ -58,9 +67,15 @@
       log(thing) {
         console.log(thing)
       },
+      clean() {
+        if (!this.node.children) return
+        this.node.children = this.node.children.filter(n=>!this.isEmpty(n))
+        console.log(this.node.children)
+      },
       onInput(e) {
         console.log(e.target)
-        this.$emit('input', e)
+        this.clean()
+        this.$emit('change', e)
       },
       isEmpty(node) {
         return node.type === 'text' && /^\s*$/.test(node.data)
@@ -81,6 +96,9 @@
         this.top = null
         this.left = null
       }
+    },
+    mounted() {
+      this.clean()
     },
     name: 'template-element'
   }
