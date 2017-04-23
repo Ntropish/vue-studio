@@ -8,6 +8,7 @@ import App from './App'
 import routes from './routes'
 
 import drag from './directives/drag'
+import follow from './directives/follow'
 
 Vue.use(Electron)
 Vue.use(Resource)
@@ -15,6 +16,7 @@ Vue.use(Router)
 Vue.config.debug = true
 
 Vue.directive('drag', drag)
+Vue.directive('follow', follow)
 Vue.use(Vuetify)
 
 const router = new Router({
@@ -32,8 +34,8 @@ let init = [
   store=>store.dispatch('components/ADD', {name: 'Hello From Component Menu'}),
   store=>store.commit('select/ASSET', {from: 'components', id: 0}),
   store=>{
-    let selectedId = store.state.select.asset.id
-    store.commit('select/PROPERTY', {from: 'template', id: selectedId})
+    let selectedId = store.getters['select/GET_ASSET'].templateRootNodeId
+    store.commit('select/PROPERTY', {from: 'templateNodes', id: selectedId})
   }
 ]
 

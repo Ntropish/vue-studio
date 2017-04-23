@@ -1,7 +1,7 @@
 <template>
     <v-list class="propertySelector">
 
-      <v-list-tile class="title" @click.native="selectProperty({from: 'template', id: component.id})">
+      <v-list-tile class="title" @click.native="selectProperty({from: 'templateNodes', id: component.templateRootNodeId})">
         Template
       </v-list-tile>
 
@@ -15,34 +15,34 @@
           Computed
           <v-btn floating small @click.native.stop="addProperty({to: 'computed'})">
             <v-icon class="black--text">add</v-icon>
-          </v-btn>   
+          </v-btn>
 
         </v-list-tile>
 
         <v-list-tile v-for="computed in populated.computed" @click.native="selectProperty({from: 'functions', id: computed.id})">
-          <editable-span 
+          <editable-span
           :class="isSelected(computed)? '':'grey--text'"
-          :value="computed.name" 
+          :value="computed.name"
           @input="setName({id: computed.id, name: $event})">
           </editable-span>
 
         </v-list-tile>
       </v-list-item>
-      
+
 
       <v-list-item>
         <v-list-tile class="title">
           Methods
           <v-btn floating small @click.native.stop="addProperty({to: 'methods'})">
             <v-icon class="black--text">add</v-icon>
-          </v-btn>   
+          </v-btn>
 
         </v-list-tile>
 
         <v-list-tile v-for="method in populated.methods" @click.native="selectProperty({from: 'functions', id: method.id})">
-          <editable-span 
+          <editable-span
           :class="isSelected(method)? '':'grey--text'"
-          :value="method.name" 
+          :value="method.name"
           @input="setName({id: method.id, name: $event})">
           </editable-span>
 
@@ -55,19 +55,19 @@
           Props
           <v-btn floating small @click.native.stop="addProp()">
             <v-icon class="black--text">add</v-icon>
-          </v-btn>   
+          </v-btn>
         </v-list-tile>
 
         <v-list-tile v-for="prop in populated.props" @click.native="selectProperty({from: 'props', id: prop.id})">
-          <editable-span 
+          <editable-span
           :class="isSelected(prop)? '':'grey--text'"
-          :value="prop.name" 
+          :value="prop.name"
           @input="setName({id: _watch.id, name: $event})">
           </editable-span>
 
         </v-list-tile>
 
-        
+
       </v-list-item>
 
       <v-list-item>
@@ -75,14 +75,14 @@
           Watch
           <v-btn floating small @click.native.stop="addProperty({to: 'watch'})">
             <v-icon class="black--text">add</v-icon>
-          </v-btn>   
+          </v-btn>
 
         </v-list-tile>
 
         <v-list-tile v-for="_watch in populated.watch" @click.native="selectProperty({from: 'functions', id: _watch.id})">
-          <editable-span 
+          <editable-span
           :class="isSelected(_watch)? '':'grey--text'"
-          :value="_watch.name" 
+          :value="_watch.name"
           @input="setName({id: _watch.id, name: $event})">
           </editable-span>
 
@@ -171,7 +171,7 @@
           }
         })
         return result
-        
+
       }
     },
     components: {

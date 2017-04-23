@@ -4,7 +4,7 @@ let count = 0
 import Template from './Template'
 
 export default class Component {
-  constructor({id, name = 'No Name Component'} = {}) {
+  constructor({id, name = 'No Name Component', templateRootNode} = {}) {
     this.name = name
     this.computed = []
     this.data = ''
@@ -12,7 +12,7 @@ export default class Component {
     this.props = []
     this.watch = []
     this.id = Component.getId()
-    this.template = new Template()
+    this.templateRootNodeId = templateRootNode.id
     this.style = ''
 
   }

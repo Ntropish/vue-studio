@@ -2,12 +2,12 @@
   <div>
     <function-editor v-if="editorFor === 'functions'" :id="id"></function-editor>
     <prop-editor v-if="editorFor === 'props'" :id="id"></prop-editor>
-    <template-editor v-if="editorFor === 'template'" :id="id"></template-editor>
+    <template-editor v-if="editorFor === 'templateNodes'" :id="id"></template-editor>
     <div v-if="!editorFor">
       No Property Selected
     </div>
   </div>
-  
+
 </template>
 
 <script>

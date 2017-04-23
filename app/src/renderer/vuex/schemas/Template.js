@@ -1,16 +1,7 @@
+import TemplateNode from './TemplateNode'
+
 export default class Template {
-  constructor({text = `<div>
-      <div>
-        wat
-      </div>
-      <div>
-        Hey!
-        Text
-        wauw
-        <span></span>
-      </div>
-    </div>
-    `} = {}) {
-    this.text = text
+  constructor({rootNode = new TemplateNode()} = {}) {
+    this.rootNode = rootNode
   }
 }

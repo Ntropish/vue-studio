@@ -1,6 +1,7 @@
 import Vue from 'vue'
 
 import Component from '../schemas/Component'
+import TemplateNode from '../schemas/TemplateNode'
 
 let count = 0
 let state = {
@@ -49,7 +50,11 @@ const actions = {
   },
 
   ADD({dispatch, commit}, {name}) {
-    let newComponent = new Component({name})
+    let templateRootNode = new TemplateNode({type: 'tag', tagName: 'div'});
+
+    let newComponent = new Component({name, templateRootNode})
+
+    commit('templateNodes/ADD', templateRootNode, {root: true} )
     return dispatch('functions/ADD', {name: 'data'}, {root: true}).then(
       function(newFunction) {
         newComponent.data = newFunction.id

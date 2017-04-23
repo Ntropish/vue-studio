@@ -1,18 +1,12 @@
 <template>
   <div class="templateEditor">
+    <template-menu id="">
 
-    </br>
-    </br>
-    <v-text-field
-      label="Template"
-      v-model="modelText"
-      multi-line
-    ></v-text-field>
-    <template-element :node="rootNode" @input="writeNodes"></template-element>
+    </template-menu>
+    <template-element :id="id" @change="writeNodes"></template-element>
 
-    {{rootNode}}
   </div>
-  
+
 </template>
 
 <script>
@@ -21,6 +15,7 @@
 
   import htmlparser from 'htmlparser'
   import templateElement from './TemplateElement'
+  import templateMenu from './TemplateMenu'
   export default {
     props: ['id'],
     data() {
@@ -33,36 +28,21 @@
       let parser = new htmlparser.Parser(handler)
 
       return {
-        parser,        
+        parser,
         parsed: null,
       }
     },
     computed: {
-      ...mapState({
-        text: function(state) {
-          return state.components.items[this.id].template.text
-        }
-      }),
-      modelText: {
-        get() {
-          return this.text
-        },
-        set(value) {
-          this.setText(value)
-        }
-      },
-      rootNode() {
-        return this.parsed? this.parsed[0] : {}
-      }
     },
     methods: {
       setText(value) {
-        this.$store.commit('components/SET_TEMPLATE', {id: this.id, value})
+        // this.$store.commit('components/SET_TEMPLATE', {id: this.id, value})
       },
       writeNodes() {
-        let value = this.writeNode(this.rootNode)
-        this.$store.commit('components/SET_TEMPLATE', {id: this.id, value})
-        
+        // let value = this.writeNode(this.rootNode)
+
+        // this.$store.commit('components/SET_TEMPLATE', {id: this.id, value})
+
       },
       writeNode(node) {
         if (node.type === 'tag') {
@@ -81,16 +61,9 @@
 
       }
     },
-    watch: {
-      text(newText) {
-        this.parser.parseComplete(newText)
-      }
-    },
-    mounted() {
-      this.parser.parseComplete(this.text)      
-    },
     components: {
       templateElement,
+      templateMenu,
     },
     name: 'template-editor'
   }
