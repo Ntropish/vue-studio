@@ -1,124 +1,135 @@
 <template>
+<div class="">
   <div class="templateElement"
-  v-if="node || true"
+  v-if="node"
   :class="node.type"
-  v-bind:style="dragStyle"
   contenteditable=false
-  @dragover="dragOver"
+  :key="id"
+  v-follow
+  @dragover.stop="dragOver"
   @dragout="dragOut"
-  >
-    <div>
-      <div
-      class="tagHead"
-      :class="node.tagName || 'text'"
-      v-drag="'hey'"
-      v-follow
-      @up="up"
-      @down="down"
-      @drag="follow($event)"
-      >
-        {{node.tagName || 'text'}}
-      </br>
-        {{node}}
+  @mouseup="dragOut"
+  @drop.stop="act"
+  @dragover="drag"
+  @gooddrop.stop="removeSelf">
 
-      </div>
-      <div class="tagBody" >
-        <span v-for="(child, index) in node.children" >
+    <div class="tagHead"
+    :class="node.tagName || 'text'"
+    v-drag="{action: 'add', childId: id}" >
+      {{id}}
+      <!-- {{'d: ' +dropIndex}} -->
+      <!-- {{'type: '+node.type}} -->
+      {{node.tagName}}
 
-          <template-element
-          v-if="!isEmpty(child)"
-          class="child"
-          :node="child"></template-element>
-        </span>
-
-        <div v-if="node.type === 'text'" @keydown="textChange" contenteditable>
-          {{node.data}}
-        </div>
-
-      </div>
     </div>
+    <div class="tagBody">
+      <template-element
+      v-for="(childId, index) in node.children"
+      :id="childId"
+      @remove="removeChild"
+      ref="children"
+      :class="index === dropIndex? 'aboveMe':''"
+      ></template-element>
 
+      <div v-if="node.type === 'text'" @keyup.prevent="textChange" contenteditable v-once>
+        {{node.text}}
+      </div>
+
+    </div>
   </div>
-
+</div>
 </template>
 
 
 
 <script>
+
   import { mapState } from 'vuex'
 
   export default {
     props: ['id'],
     data() {
       return {
-        dragging: false,
-        top: 0,
-        left: 0,
-        baseTop: 0,
-        baseLeft: 0,
+        action: null,
+        dropIndex: null
       }
     },
     computed: {
       ...mapState({
         node(state) {
           return state.templateNodes.items[this.id]
-
         }
       }),
-      dragStyle() {
-        let obj = {
-          position: this.dragging? 'relative' :null,
-          left: this.left? this.left+'px':null,
-          top: this.top? this.top+'px':null,
-        }
-        return obj
-      }
     },
     methods: {
       log(thing) {
         console.log(thing)
       },
-      clean() {
-        if (!this.node.children) return
-        this.node.children = this.node.children.filter(n=>!this.isEmpty(n))
-        console.log(this.node.children)
-      },
       onInput(e) {
         this.$emit('change', e)
       },
       textChange(e) {
-        console.log(e.target.textContent)
-        this.node.data = e.target.textContent
+        this.$store.commit('templateNodes/SET_TEXT', {id: this.id, value: e.target.textContent})
+        // this.node.data = e.target.textContent
         // this.onInput()
       },
       isEmpty(node) {
+        if (!node) return true
         return node.type === 'text' && /^\s*$/.test(node.data)
       },
-      follow({detail}) {
-        this.top = detail.clientY - this.baseTop
-        this.left = detail.clientX - this.baseLeft
-      },
-      up({detail}) {
-        this.dragging = true
-        this.top = 0
-        this.left = 0
-        this.baseTop = detail.clientY
-        this.baseLeft = detail.clientX
-      },
-      down() {
-        this.dragging = false
-        this.top = null
-        this.left = null
-      },
       dragOver(e) {
-        console.log('over')
+        this.action = e.detail
       },
       dragOut(e) {
-        console.log('out')
+        this.action = null
+        this.dropIndex = null
+      },
+      act({detail: {value: {action, childId}, e, el}}) {
+        console.log('act:', action, childId, e, el)
+        if (action === 'add') {
+          if (this.node.type === 'text') throw new Error('Can\'t drop on text')
+          el.dispatchEvent(new CustomEvent('gooddrop', {bubbles: true, cancelable: true}))
+
+          if (childId) {
+            console.log(this.heightToIndex(e), this.dropIndex)
+            this.$store.commit('templateNodes/ADD_CHILD', {
+              id: this.id,
+              childId,
+              index: this.heightToIndex(e)})
+          } else {
+            this.$store.dispatch('templateNodes/ADD_CHILD', {id: this.id})
+          }
+        }
+      },
+      removeSelf(e) {
+        this.$emit('remove', this.id)
+      },
+      removeChild(childId) {
+        this.$store.commit('templateNodes/REMOVE_CHILD', {id: this.id, childId})
+      },
+      drag(e) {
+        console.log()
+        this.dropIndex = this.heightToIndex(e.detail.e.clientY)
+      },
+      heightToIndex(e) {
+
+        if (this.$refs.children) {
+          let result = 0
+          this.$refs.children.forEach((child, index)=>{
+            // console.log(child.$el.offsetTop, e, result, index)
+            if (child.$el.offsetTop < e) {
+              console.log('set to', index)
+              result = index+1
+            }
+          })
+          console.log('result:', result)
+          return result
+        }
+
+        return 0
       }
     },
     mounted() {
-      // this.clean()
     },
     name: 'template-element'
   }
@@ -131,38 +142,42 @@
 }
 
 .tagHead {
+  background: hsla(200, 0%, 60%, 0.1);
   padding: 0.4em 0 0.4em 0.4em;
-  border-radius: 0.4em 0 0 0;
+  border-radius: 0 0 0 0.4em;
+  display: flex;
+  cursor: pointer;
+}
 
+.aboveMe>.templateElement>.tagHead {
+  border-top: 1px solid red;
 }
 
 .tagHead.span {
-  background: hsla(200, 40%, 60%, 0.8);
+  background: hsla(200, 40%, 60%, 0.2);
 }
 
 .tagHead.div {
-  background: hsla(0, 40%, 60%, 0.8);
+  box-shadow: -1px 1px 1px hsla(0,40%,60%,0.8);
 }
 
 .tagHead.text {
-  background: hsla(0, 10%, 90%, 0.8);
+  box-shadow: -1px 1px 1px hsla(210,40%,60%,0.8);
 }
 
 .tagBody {
-  padding: 0.4em 0 0.4em 0.4em;
+  padding: 0.4em 0 0.4em 0.6em;
 
 }
 
 .templateElement {
-  background: hsl(0, 0%, 95%);
-  border-right: 0;
+  margin-top: 1em;
+  background: hsl(0, 0%, 99%);
+  border-left: 1px solid rgba(0,0,0,0.05);
   border-radius: 0.4em 0 0 0.4em;
-  box-shadow: 0 0 3px rgba(0,0,0,0.3);
+  /*box-shadow: -1px 1px 1px rgba(0,0,0,0.1);*/
 }
 
-.tag:not(.tag>.tag) {
-  background: red;
-}
 .tag+.tag {
   margin-top: 0.4em;
 }

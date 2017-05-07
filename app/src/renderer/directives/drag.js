@@ -12,38 +12,35 @@ export default {
     onify(el)
     el.on.mousedown = downHandler
 
-    // Namespaced handler
-    document.on[id].mouseup = upHandler
-
     function downHandler(e) {
+      e.stopPropagation()
       document.on[id].mousemove = throttle(15, moveHandler)
       document.on[id].mouseover = mouseOverHandler
       document.on[id].mouseout  = mouseOutHandler
+      document.on[id].mouseup = upHandler
+
 
       // Kill default drag and drop
       e.preventDefault()
-      el.dispatchEvent(new CustomEvent('up', {detail: e}))
+      el.dispatchEvent(new CustomEvent('up', {detail: e, bubbles: true, cancelable: true}))
     }
 
     function moveHandler(e) {
-      el.dispatchEvent(new CustomEvent('drag', {detail: e}))
-    }
-
-    function mouseOverHandler(e) {
-      console.log(e.target)
-      e.target.dispatchEvent(new CustomEvent('dragover', {detail: binding.value}))
+      el.dispatchEvent(new CustomEvent('drag', {detail: e, bubbles: true, cancelable: true}))
+      e.target.dispatchEvent(new CustomEvent('dragover', {detail: {value: binding.value, e}, bubbles: true, cancelable: true}))
     }
 
     function mouseOutHandler(e) {
-      e.target.dispatchEvent(new CustomEvent('dragout', {detail: binding.value}))
+      e.target.dispatchEvent(new CustomEvent('dragout', {detail: binding.value, bubbles: true, cancelable: true}))
     }
 
     function upHandler(e) {
+      document.on[id].mouseup = null
       document.on[id].mousemove = null
       document.on[id].mouseover = null
       document.on[id].mouseout = null
-      e.target.dispatchEvent(new CustomEvent('drop', {detail: binding.value}))
-      el.dispatchEvent(new CustomEvent('down', {detail: e}))
+      e.target.dispatchEvent(new CustomEvent('drop', {detail: {value: binding.value, e, el}, bubbles: true, cancelable: true}))
+      el.dispatchEvent(new CustomEvent('down', {detail: e, bubbles: true, cancelable: true}))
     }
   },
 
